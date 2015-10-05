@@ -4,7 +4,7 @@
 require_once('helpers/config.php');
 require_once('controller/AppController.php');
 
-new \helpers\config();
+//new \helpers\config();
 
 //MAKE SURE ERRORS ARE SHOWN... MIGHT WANT TO TURN THIS OFF ON A PUBLIC SERVER
 error_reporting(E_ALL);

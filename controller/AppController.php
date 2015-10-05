@@ -46,6 +46,7 @@ class AppController
 
 
 
+
         if($layoutV->didUserPressRegistrationLink())
         {
             $lv = $registerV;

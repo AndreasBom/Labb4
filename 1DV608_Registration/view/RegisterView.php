@@ -15,7 +15,6 @@ use model\PasswordDoNotMatchException;
 use model\NotUniqueUserNameException;
 use model\RegisterModel;
 use model\UserNameContainingHTMLTagException;
-use model\ValidationFailsException;
 
 
 class RegisterView implements IView
@@ -25,17 +24,21 @@ class RegisterView implements IView
     private static $name = "RegisterView::UserName";
     private static $password = "RegisterView::Password";
     private static $repeatPassword = "RegisterView::PasswordRepeat";
-    private static $register = "RegisterView::Register";
-    private static $SessionUserName = "RegisterView::SessionUserName";
+    private static $register = "RegisterView::RegisterUser";
+    private static $SessionUserName = "RegisterView::SessionUsername";
     private static $succsessfullRegistration = "RegisterView::SuccsessfullRediret";
 
     private $message;
     private $SessionUsername;
-    private $cookeStorage;
+    //private $cookeStorage;
 
     public function __construct()
     {
-        $this->cookeStorage = new CookieStorage();
+        //$this->cookeStorage = new CookieStorage();
+    }
+
+    public function getUserClient() {
+        return new \model\UserClient($_SERVER["REMOTE_ADDR"], $_SERVER["HTTP_USER_AGENT"]);
     }
 
 
@@ -74,11 +77,6 @@ class RegisterView implements IView
         return '';
     }
 
-    public function notUniqueUsername()
-    {
-        $this->message = "User exists, pick another username";
-    }
-
     //Validates input and if valid creates a new User
     public function getUserObject()
     {
@@ -99,23 +97,22 @@ class RegisterView implements IView
         {
             return new \model\User($username, $password);
         }
-        catch (ValidationFailsException $ex)
+        catch (NotValidUserNameException $ex)
         {
-            foreach($ex->getErrors() as $e)
-            {
-                if($e instanceof NotValidUserNameException)
-                {
-                    $this->message .= "Username has too few characters, at least 3 characters.<br/>";
-                }
-                if($e instanceof NotValidPasswordException)
-                {
-                 $this->message .= "Password has too few characters, at least 6 characters<br/>";
-                }
-                if($e instanceof UserNameContainingHTMLTagException)
-                {
-                    $this->message .= "Username contains invalid characters.<br/>";
-                }
-            }
+            $this->message .= "Username has too few characters, at least 3 characters.<br/>";
+        }
+        catch (NotValidPasswordException $ex)
+        {
+            $this->message .= "Password has too few characters, at least 6 characters.<br/>";
+        } catch (PasswordDoNotMatchException $ex) {
+            $this->message .= "Passwords do not match.<br/>";
+        } /*catch(NotUniqueUserNameException $ex)
+        {
+            $this->message .= "User exists, pick another username.";
+        }*/
+        catch (UserNameContainingHTMLTagException $ex)
+        {
+            $this->message .= "Username contains invalid characters.";
         }
 
         return null;
@@ -123,38 +120,32 @@ class RegisterView implements IView
 
     public function redirectSuccessfulLogin()
     {
-        $_SESSION[self::$succsessfullRegistration] = "Registration new user.";
-
+        $this->cookeStorage->save(self::$succsessfullRegistration, "Registration new user.");
         header("Location: " .$_SERVER["PHP_SELF"]);
     }
 
-    public function getUsernameInSession()
+    public function isSuccessfullRegistration()
     {
-        if(isset($_SESSION[self::$SessionUserName]))
-        {
-            $name = $_SESSION[self::$SessionUserName];
-            unset($_SESSION[self::$SessionUserName]);
-            return $name;
-        }
-
-        return null;
-    }
-
-    public function wasSuccessfullRegistration()
-    {
-        if(isset($_SESSION[self::$succsessfullRegistration]))
+        if($this->cookeStorage->load(self::$succsessfullRegistration))
         {
 
             return true;
         }
+
         return false;
     }
 
-    public function getRegistrationMessage()
+    public function registrationMessage()
     {
-        $message = $_SESSION[self::$succsessfullRegistration];
-        unset($_SESSION[self::$succsessfullRegistration]);
-        return $message;
+        return $this->cookeStorage->loadAndRemove(self::$succsessfullRegistration);
+    }
+
+
+
+    public function message($string)
+    {
+
+        $this->message = $string;
     }
 
 

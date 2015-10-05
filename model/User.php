@@ -12,6 +12,19 @@ class NotValidUserNameException extends \Exception{}
 class NotValidPasswordException extends \Exception{}
 class PasswordDoNotMatchException extends \Exception{}
 class UserNameContainingHTMLTagException extends \Exception{}
+class ValidationFailsException extends \Exception
+{
+    private $exceptions = array();
+    public function __construct(array $arrayExceptions)
+    {
+        $this->exceptions = $arrayExceptions;
+    }
+
+    public function getErrors()
+    {
+        return $this->exceptions;
+    }
+}
 
 
 class User
@@ -19,9 +32,31 @@ class User
     private $username;
     private $password;
 
-    public function __construct($username, $password, $repeatedPassword)
+    public function __construct($username, $password)
     {
-        if(strlen($username) != strlen(strip_tags($username)))
+        $exceptions = array();
+
+        if(strlen($username != strip_tags(strip_tags($username))))
+        {
+            $exceptions[] = new UserNameContainingHTMLTagException("Username contain illegal characters");
+        }
+        if(strlen($username) < 3)
+        {
+            $exceptions[] = new NotValidUserNameException("Username has too few characters");
+        }
+        if(strlen($password) < 6)
+        {
+            $exceptions[] = new NotValidPasswordException("Password has too few characters");
+        }
+
+        if($exceptions != null)
+        {
+            throw new ValidationFailsException($exceptions);
+        }
+
+
+
+        /*if(strlen($username) != strlen(strip_tags($username)))
         {
             throw new UserNameContainingHTMLTagException;
         }
@@ -32,19 +67,13 @@ class User
         if(strlen($password) < 6)
         {
             throw new NotValidPasswordException("Not valid");
-        }
-        if(strcmp($password, $repeatedPassword) != 0)
-        {
-            throw new PasswordDoNotMatchException();
-        }
-
-
+        }*/
 
         $this->username = $username;
         $this->password = $password;
     }
 
-
+/*
     public function validateNoHtmlTags($name)
     {
         if(strlen($name) != strlen(strip_tags($name)))
@@ -84,7 +113,7 @@ class User
         $this->dal->saveUser(new User($username, $password));
     }
 
-
+*/
 
 
     /**

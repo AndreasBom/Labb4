@@ -33,71 +33,26 @@ class RegisterController
 
         if($this->regView->didUserTryToRegister())
         {
-            $userName = $this->regView->getUsername();
-            $password = $this->regView->getPassword();
-            $repeatPassword = $this->regView->getRepeatPassword();
 
-            $this->validateInput($userName, $password, $repeatPassword);
+            $userObject = $this->regView->getUserObject();
+            if($userObject != null)
+            {
+                try
+                {
+                    $this->model->saveUser($userObject);
 
-            $this->model->saveUser($userName, $password);
+                    $this->regView->redirectSuccessfulLogin();
+                }
+                catch (\Exception $ex)
+                {
+                    $this->regView->notUniqueUsername();
+                }
+            }
+
 
         }
 
 
     }
-
-    public function validateInput($userName, $password, $repeatPassword)
-    {
-        try
-        {
-            $message= '';
-            try
-            {
-                $this->model->validateUsername($userName);
-            }
-            catch (NotValidUserNameException $ex)
-            {
-                $message = "Username has too few characters, at least 3 characters.<br/>";
-            }
-            try
-            {
-                $this->model->validatePassword($password);
-            }
-            catch (NotValidPasswordException $ex)
-            {
-                $message .= "Password has too few characters, at least 6 characters.<br/>";
-            }
-            try
-            {
-                $this->model->validateRepetedPassword($password, $repeatPassword);
-            }
-            catch(PasswordDoNotMatchException $ex)
-            {
-                $message .= "Passwords do not match.<br/>";
-            }
-            try
-            {
-                $this->model->UserNameisUnique($userName);
-            }
-            catch(NotUniqueUserNameException $ex)
-            {
-                $message .= "User exists, pick another username.";
-            }
-            try
-            {
-                $this->model->validateNoHtmlTags($userName);
-            }
-            catch (UserNameContainingHTMLTagException $ex)
-            {
-                $message .= "Username contains invalid characters.";
-            }
-        }
-        finally
-        {
-            $this->regView->message($message);
-        }
-    }
-
-
 
 }
