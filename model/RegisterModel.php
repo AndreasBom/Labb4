@@ -8,13 +8,7 @@
 
 namespace model;
 
-
-
-/*class NotValidUserNameException extends \Exception{}
-class NotValidPasswordException extends \Exception{}
-class PasswordDoNotMatchException extends \Exception{}
 class NotUniqueUserNameException extends \Exception{}
-class UserNameContainingHTMLTagException extends \Exception{}*/
 
 use view\LoginView;
 
@@ -29,7 +23,7 @@ class RegisterModel
         $this->arrayOfUsers = $this->dal->getUsers();
     }
 
-    public function UserNameisUnique($name)
+    public function userNameisUnique($name)
     {
         foreach($this->arrayOfUsers as $user)
         {
@@ -41,6 +35,15 @@ class RegisterModel
         }
 
         return true;
+    }
+
+    public function saveUser($user)
+    {
+        if($this->userNameisUnique($user->getUsername()))
+        {
+            $this->dal->saveUserToDatabase($user);
+        }
+
     }
 
 

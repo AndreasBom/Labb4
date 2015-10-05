@@ -5,7 +5,7 @@ namespace view;
 class LayoutView {
 
 
-  private static $registerLink = "Register";
+  private static $registerLink = "register";
 
   public function render($isLoggedIn, IView $v, DateTimeView $dtv) {
     echo '<!DOCTYPE html>
@@ -17,7 +17,7 @@ class LayoutView {
         </head>
         <body>
 
-          <h1>Assignment 2</h1>
+          <h1>Assignment 4</h1>
           '. $this->renderRegistrationLink($isLoggedIn, $v) .'
           ' . $this->renderIsLoggedIn($isLoggedIn) . '
           

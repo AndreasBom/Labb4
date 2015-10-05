@@ -20,5 +20,7 @@ class DataController
             printf("Connect failed: %s\n", mysqli_connect_error());
             exit();
         }
+
+        $this->loginDAL = new \model\LoginDAL($this->mysqli);
     }
 }

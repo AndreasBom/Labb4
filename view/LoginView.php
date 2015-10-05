@@ -26,6 +26,7 @@ class LoginView implements \view\IView{
 	{
 		$this->loginModel = $model;
 		$this->cookieStorage = new \view\CookieStorage();
+		$this->regView = new \view\RegisterView();
 	}
 
 	/**Returns true if user tries to log in
@@ -156,6 +157,7 @@ class LoginView implements \view\IView{
 	 */
 	public function showMessage($loggedIn)
 	{
+
 		//User is logged in
 		if($loggedIn)
 		{
@@ -163,16 +165,6 @@ class LoginView implements \view\IView{
 			{
 				$message = "Welcome and you will be remembered";
 			}
-
-			/*try
-			{
-				$this->loginWithSavedCredentials();
-
-			}
-			catch (\exception\InvalidCookieException $ex)
-			{
-				$message = "Wrong information in cookies";
-			}*/
 
 			elseif($this->loginWithSavedCredentials())
 			{
@@ -200,10 +192,13 @@ class LoginView implements \view\IView{
 			{
 				$message = "Password is missing";
 			}
+
 			else
 			{
 				$message = "Wrong name or password";
 			}
+
+
 		}
 
 
@@ -224,11 +219,17 @@ class LoginView implements \view\IView{
 
 		$message = '';
 
-
 		if($this->preventDoublePosts() == false)
 		{
 			$message = $this->cookieStorage->loadAndRemove(self::$messageId);
 		}
+
+		//If user is redirected from a successful registration
+		if($this->regView->wasSuccessfullRegistration())
+		{
+			$message = $this->regView->getRegistrationMessage();
+		}
+
 
 		//Show login or logout form
 		if($this->loginModel->isUserLoggedIn() == false)
@@ -302,7 +303,10 @@ class LoginView implements \view\IView{
 	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
 	private function getRequestUserName() {
 		//RETURN REQUEST VARIABLE: USERNAME
-
+        if($this->regView->getUsernameInSession() != null)
+        {
+            return $this->regView->getUsernameInSession();
+        }
 		return $this->loginModel->getUsernameInSession();
 	}
 	

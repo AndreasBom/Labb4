@@ -38,7 +38,8 @@ class LoginModel
     {
         foreach(self::$users as $user)
         {
-            if($user->getUsername() === $name && $user->getPassword() === $password)
+            $decrypted = password_verify($password, $user->getPassword());
+            if($user->getUsername() === $name && $decrypted === true)
             {
                 $_SESSION[self::$userLoggedInSession] = true;
                 return true;
