@@ -19,8 +19,9 @@ class LoginDAL
 
     public function __construct()
     {
-        $this->db = new \mysqli(`localhost`,`admin`,`1234`, `users`);
-        //$this->db = new \mysqli("registration-205177.mysql.binero.se","205177_gc34601","paavpg39", "205177-registration");
+        //$this->db = new \mysqli(`localhost`,`admin`,`1234`, `registration`);
+        //$this->db = new \mysqli("localhost", "admin", "1234", "loginapp");
+        $this->db = new \mysqli("registration-205177.mysql.binero.se","205177_gc34601","paavpg39", "205177-registration");
         if (mysqli_connect_errno()) {
             printf("Connect failed: %s\n", mysqli_connect_error());
             exit();
@@ -42,9 +43,9 @@ class LoginDAL
      */
     public function getUsers()
     {
-        //$stmt = $this->db->prepare("SELECT `t`.* FROM `loginapp`.`users` t");
-        $stmt = $this->db->prepare("SELECT * FROM `loginapp`.`users`");
-        //$stmt = $this->db->prepare("SELECT * FROM `205177-registration`.`users`");
+        //$stmt = $this->db->prepare("SELECT * FROM `registration`.`regtab`");
+        //$stmt = $this->db->prepare("SELECT * FROM loginapp.users");
+        $stmt = $this->db->prepare("SELECT * FROM `205177-registration`.`users`");
         if($stmt === false)
         {
             throw new \Exception($this->db->error);
@@ -75,7 +76,8 @@ class LoginDAL
     public function saveUserToDatabase(User $user)
     {
 
-        //$stmt = $this->db->prepare("INSERT INTO `login`.`usertable` (`username`, `password`) VALUES (?,?)");
+        //$stmt = $this->db->prepare("INSERT INTO `registration`.`regTab` (`name`, `password`) VALUES (?,?)");
+        //$stmt = $this->db->prepare("INSERT INTO `loginapp`.`users` (`username`, `password`) VALUES (?,?)");
         $stmt = $this->db->prepare("INSERT INTO `205177-registration`.`users` (`username`, `password`) VALUES (?,?)");
 
 

@@ -303,10 +303,14 @@ class LoginView implements \view\IView{
 	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
 	private function getRequestUserName() {
 		//RETURN REQUEST VARIABLE: USERNAME
-        if($this->regView->getUsernameInSession() != null)
+
+		//if user returns from registration view and has done a successful registration
+		$name = $this->regView->getUsernameInSession();
+        if($name!= null)
         {
-            return $this->regView->getUsernameInSession();
+            return $name;
         }
+		//if user has done an unsuccessful login attempt
 		return $this->loginModel->getUsernameInSession();
 	}
 	
