@@ -8,6 +8,7 @@
 
 namespace model;
 
+require_once('DbConnection.php');
 
 class LoginDAL
 {
@@ -16,16 +17,17 @@ class LoginDAL
      */
     private $listOfUsers = array();
     private $db;
+    private $connection;
 
     public function __construct()
     {
-        //$this->db = new \mysqli(`localhost`,`admin`,`1234`, `registration`);
-        //$this->db = new \mysqli("localhost", "admin", "1234", "loginapp");
-        $this->db = new \mysqli("registration-205177.mysql.binero.se","205177_gc34601","paavpg39", "205177-registration");
-        if (mysqli_connect_errno()) {
-            printf("Connect failed: %s\n", mysqli_connect_error());
-            exit();
-        }
+        $this->connect();
+    }
+
+    private function connect()
+    {
+        $this->connection = new DbConnection();
+        $this->db = $this->connection->connect();
     }
 
     /**
@@ -43,9 +45,15 @@ class LoginDAL
      */
     public function getUsers()
     {
+        if($this->db == null)
+        {
+            $this->connect();
+        }
         //$stmt = $this->db->prepare("SELECT * FROM `registration`.`regtab`");
         //$stmt = $this->db->prepare("SELECT * FROM loginapp.users");
-        $stmt = $this->db->prepare("SELECT * FROM `205177-registration`.`users`");
+        //$stmt = $this->db->prepare("SELECT * FROM `205177-registration`.`users`");
+        $stmt = $this->db->prepare($this->connection->selectUsersSQL());
+
         if($stmt === false)
         {
             throw new \Exception($this->db->error);
@@ -61,25 +69,23 @@ class LoginDAL
             $this->listOfUsers[] = $user;
         }
 
+        $this->db->close();
+        $this->db = null;
+
         return $this->listOfUsers;
     }
 
-    public function saveUser($user)
-    {
-
-        /*$this->addUser($user);
-        $users = $this->getUsers();
-        $stringData = serialize($users);
-        file_put_contents("users.txt", $stringData);*/
-    }
 
     public function saveUserToDatabase(User $user)
     {
-
+        if($this->db == null)
+        {
+            $this->connect();
+        }
         //$stmt = $this->db->prepare("INSERT INTO `registration`.`regTab` (`name`, `password`) VALUES (?,?)");
         //$stmt = $this->db->prepare("INSERT INTO `loginapp`.`users` (`username`, `password`) VALUES (?,?)");
-        $stmt = $this->db->prepare("INSERT INTO `205177-registration`.`users` (`username`, `password`) VALUES (?,?)");
-
+        //$stmt = $this->db->prepare("INSERT INTO `205177-registration`.`users` (`username`, `password`) VALUES (?,?)");
+        $stmt = $this->db->prepare($this->connection->insertUserSQL());
 
         $name = $user->getUsername();
         $pass = password_hash($user->getPassword(), PASSWORD_BCRYPT);
@@ -88,5 +94,7 @@ class LoginDAL
 
         $stmt->execute();
 
+        $this->db->close();
+        $this->db = null;
     }
 }
