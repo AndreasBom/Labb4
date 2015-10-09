@@ -54,67 +54,9 @@ class User
             throw new ValidationFailsException($exceptions);
         }
 
-
-
-        /*if(strlen($username) != strlen(strip_tags($username)))
-        {
-            throw new UserNameContainingHTMLTagException;
-        }
-        if(strlen($username) < 3)
-        {
-            throw new NotValidUserNameException("Not valid");
-        }
-        if(strlen($password) < 6)
-        {
-            throw new NotValidPasswordException("Not valid");
-        }*/
-
         $this->username = $username;
         $this->password = $password;
     }
-
-/*
-    public function validateNoHtmlTags($name)
-    {
-        if(strlen($name) != strlen(strip_tags($name)))
-        {
-            throw new UserNameContainingHTMLTagException;
-        }
-    }
-
-
-    public function validateUsername($username)
-    {
-        if(strlen($username) < 3)
-        {
-            throw new NotValidUserNameException("Not valid");
-        }
-
-    }
-
-    public function validatePassword($password)
-    {
-        if(strlen($password) < 6)
-        {
-            throw new NotValidPasswordException("Not valid");
-        }
-    }
-
-    public function validateRepetedPassword($password, $repeatedPassword)
-    {
-        if(strcmp($password, $repeatedPassword) != 0)
-        {
-            throw new PasswordDoNotMatchException();
-        }
-    }
-
-    public function saveUser($username, $password)
-    {
-        $this->dal->saveUser(new User($username, $password));
-    }
-
-*/
-
 
     /**
      * @return string. Username

@@ -45,13 +45,11 @@ class LoginDAL
      */
     public function getUsers()
     {
+        //if database connection is null, re-establish a new connection
         if($this->db == null)
         {
             $this->connect();
         }
-        //$stmt = $this->db->prepare("SELECT * FROM `registration`.`regtab`");
-        //$stmt = $this->db->prepare("SELECT * FROM loginapp.users");
-        //$stmt = $this->db->prepare("SELECT * FROM `205177-registration`.`users`");
         $stmt = $this->db->prepare($this->connection->selectUsersSQL());
 
         if($stmt === false)
@@ -69,6 +67,7 @@ class LoginDAL
             $this->listOfUsers[] = $user;
         }
 
+        //Close db connection and set db to null
         $this->db->close();
         $this->db = null;
 
@@ -78,13 +77,11 @@ class LoginDAL
 
     public function saveUserToDatabase(User $user)
     {
+        //if database connection is null, re-establish a new connection
         if($this->db == null)
         {
             $this->connect();
         }
-        //$stmt = $this->db->prepare("INSERT INTO `registration`.`regTab` (`name`, `password`) VALUES (?,?)");
-        //$stmt = $this->db->prepare("INSERT INTO `loginapp`.`users` (`username`, `password`) VALUES (?,?)");
-        //$stmt = $this->db->prepare("INSERT INTO `205177-registration`.`users` (`username`, `password`) VALUES (?,?)");
         $stmt = $this->db->prepare($this->connection->insertUserSQL());
 
         $name = $user->getUsername();
@@ -94,6 +91,7 @@ class LoginDAL
 
         $stmt->execute();
 
+        //Close db connection and set db to null
         $this->db->close();
         $this->db = null;
     }

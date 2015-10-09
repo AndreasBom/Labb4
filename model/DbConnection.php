@@ -64,6 +64,7 @@ class DbConnection
 
     public function selectUsersSQL()
     {
+        //Different select SQL depending on remote or local db
         switch($this->typeOfConnection)
         {
             case "remote":
@@ -77,6 +78,7 @@ class DbConnection
 
     public function insertUserSQL()
     {
+        //Different insert SQL depending on remote or local db
         switch($this->typeOfConnection)
         {
             case "remote":

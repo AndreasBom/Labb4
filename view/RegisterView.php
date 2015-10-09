@@ -74,6 +74,7 @@ class RegisterView implements IView
         return '';
     }
 
+    //Message to display if username is not unique
     public function notUniqueUsername()
     {
         $this->message = "User exists, pick another username";
@@ -197,6 +198,5 @@ class RegisterView implements IView
         }
         return '';
     }
-
 
 }
