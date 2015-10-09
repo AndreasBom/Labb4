@@ -8,42 +8,20 @@
 
 namespace helpers;
 
-require_once("./model/User.php");
-require_once("./model/LoginDAL.php");
+
 use model\LoginDAL;
 use model\User;
 
 class config
 {
+    //is used to get access to database
 
-    /**
-     * Set up configuration. Add User obj. to array in LoginDAL and saves to file
-     */
-    public function __construct()
-    {
-        $user1 = new User("Andreas", "123456", "123456");
-        $user2 = new User("JanneBannan", "abcdef", "abcdef");
-        $user3 = new User("Admin", "Password", "Password");
-        $user4 = new User("BlaBla", "PaSsWoRd", "PaSsWoRd");
-        $user5 = new User("aaa","bbbbbb", "bbbbbb");
+    const USERNAME = "admin";
+    const PASSWORD = "1234";
+    const SERVER = "localhost";
+    const DATABASE = "loginapp";
 
-        $dal = new LoginDAL();
-        $dal->addUser($user1);
-        $dal->addUser($user2);
-        $dal->addUser($user3);
-        $dal->addUser($user4);
-        $dal->addUser($user5);
 
-        $users = $dal->getUsers();
-        $this->save($users);
-    }
+    const DATASOURCE = "local"; // "local" or "remote"
 
-    /**
-     * @param $objToSave
-     */
-    private function save($objToSave)
-    {
-        $stringData = serialize($objToSave);
-        file_put_contents("users.txt", $stringData);
-    }
 }
